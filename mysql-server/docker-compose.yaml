@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  mysql-server:
+    image: library/mysql:5.6
+    ports:
+      - 3306:3306
+    networks:
+      - public
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      # allow root from docker interfaces
+      # - other compose services originate from thie range
+      - 'MYSQL_ROOT_HOST=172.%.%.%'
+
+  mysql-exporter:
+    image: prom/mysqld-exporter:master
+    ports:
+      - 9104:9104
+    networks:
+      - public
+    command:
+      - '--log.level=debug'
+    environment:
+      # [username[:password]@][protocol[(address)]]/dbname[?param1=value1&...&paramN=valueN]
+      # https://github.com/prometheus/mysqld_exporter/issues/53#issuecomment-152848213
+      # yes, you need the ( ) to make it work
+      - DATA_SOURCE_NAME=root:password@(mysql-server:3306)/mysql
+
+  prometheus:
+    volumes:
+      - ${PWD}/mysql-server/mysql-server.json:/etc/prometheus/targets/mysql-server.json

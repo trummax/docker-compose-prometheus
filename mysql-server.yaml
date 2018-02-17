@@ -1,0 +1,10 @@
+- job_name: 'mysql global status'
+  scrape_interval: 15s
+  static_configs:
+    - targets:
+      - 'mysql-exporter:9104'
+      labels:
+        alias: docker-mysql
+  params:
+    collect[]:
+      - global_status

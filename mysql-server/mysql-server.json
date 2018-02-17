@@ -1,0 +1,15 @@
+[
+  {
+    "targets": [ "mysql-exporter:9104" ],
+    "scrape_interval": "1m",
+    "params": {
+      "collect[]":
+        - "perf_schema.tableiowaits"
+        - "perf_schema.indexiowaits"
+        - "perf_schema.tablelocks"
+    },
+    "labels": {
+      "job": "mysql-server-global-status"
+    }
+  }
+]
